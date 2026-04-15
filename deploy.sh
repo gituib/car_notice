@@ -120,19 +120,28 @@ echo "\n6. 部署前端静态文件..."
 FRONTEND_DIR="/var/www/parking-notify"
 mkdir -p $FRONTEND_DIR
 
+# 切换回脚本所在目录
+cd "$SCRIPT_DIR"
+
+# 显示当前工作目录，用于调试
+echo "当前工作目录: $(pwd)"
+
 # 检查前端目录是否存在
 if [ ! -d "$SCRIPT_DIR/frontend" ]; then
     echo "错误：前端目录不存在，请检查目录结构"
+    echo "期望的前端目录路径: $SCRIPT_DIR/frontend"
     exit 1
 fi
 
 if [ ! -d "$SCRIPT_DIR/frontend/templates" ]; then
     echo "错误：前端模板目录不存在，请检查目录结构"
+    echo "期望的模板目录路径: $SCRIPT_DIR/frontend/templates"
     exit 1
 fi
 
 if [ ! -d "$SCRIPT_DIR/frontend/public" ]; then
     echo "错误：前端静态资源目录不存在，请检查目录结构"
+    echo "期望的静态资源目录路径: $SCRIPT_DIR/frontend/public"
     exit 1
 fi
 
