@@ -46,9 +46,12 @@ else
     echo "python3-venv 已安装，跳过安装步骤"
 fi
 
+# 保存脚本所在目录
+SCRIPT_DIR="$(dirname "$0")"
+
 # 2. 创建并激活虚拟环境
 echo "\n2. 创建并激活虚拟环境..."
-cd "$(dirname "$0")/backend"
+cd "$SCRIPT_DIR/backend"
 python3 -m venv venv
 source venv/bin/activate
 
@@ -110,8 +113,8 @@ systemctl restart nginx
 echo "\n6. 部署前端静态文件..."
 FRONTEND_DIR="/var/www/parking-notify"
 mkdir -p $FRONTEND_DIR
-cp -r "$(dirname "$0")/frontend/templates/"* $FRONTEND_DIR/
-cp -r "$(dirname "$0")/frontend/public/" $FRONTEND_DIR/
+cp -r "$SCRIPT_DIR/frontend/templates/"* $FRONTEND_DIR/
+cp -r "$SCRIPT_DIR/frontend/public/" $FRONTEND_DIR/
 chown -R www-data:www-data $FRONTEND_DIR
 
 # 7. 启动后端服务
@@ -136,7 +139,7 @@ EOF
 
 # 复制后端文件到 /var/www
 mkdir -p /var/www/parking-notify/backend
-cp -r "$(dirname "$0")/backend/"* /var/www/parking-notify/backend/
+cp -r "$SCRIPT_DIR/backend/"* /var/www/parking-notify/backend/
 
 # 重新加载 systemd 配置
 systemctl daemon-reload
