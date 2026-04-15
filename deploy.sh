@@ -12,7 +12,39 @@ echo "========================================"
 # 1. 安装必要的依赖
 echo "\n1. 安装必要的依赖..."
 sudo apt update
-sudo apt install -y nginx python3 python3-pip python3-venv
+
+# 检查 Nginx 是否安装
+if ! command -v nginx &> /dev/null; then
+    echo "Nginx 未安装，正在安装..."
+    sudo apt install -y nginx
+else
+    echo "Nginx 已安装，跳过安装步骤"
+fi
+
+# 安装其他依赖
+# 检查 Python 3 是否安装
+if ! command -v python3 &> /dev/null; then
+    echo "Python 3 未安装，正在安装..."
+    sudo apt install -y python3
+else
+    echo "Python 3 已安装，跳过安装步骤"
+fi
+
+# 检查 pip 是否安装
+if ! command -v pip3 &> /dev/null; then
+    echo "pip 未安装，正在安装..."
+    sudo apt install -y python3-pip
+else
+    echo "pip 已安装，跳过安装步骤"
+fi
+
+# 检查 python3-venv 是否安装
+if ! dpkg -l | grep -q python3-venv; then
+    echo "python3-venv 未安装，正在安装..."
+    sudo apt install -y python3-venv
+else
+    echo "python3-venv 已安装，跳过安装步骤"
+fi
 
 # 2. 创建并激活虚拟环境
 echo "\n2. 创建并激活虚拟环境..."
