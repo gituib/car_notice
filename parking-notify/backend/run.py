@@ -4,7 +4,7 @@ from app.api.routes import api_bp
 from app.config.settings import config
 
 # 创建 Flask 应用
-app = Flask(__name__)
+app = Flask('parking_notify')
 
 # 配置 CORS
 CORS(app)
