@@ -113,8 +113,26 @@ systemctl restart nginx
 echo "\n6. 部署前端静态文件..."
 FRONTEND_DIR="/var/www/parking-notify"
 mkdir -p $FRONTEND_DIR
-cp -r "$SCRIPT_DIR/frontend/templates/"* $FRONTEND_DIR/
-cp -r "$SCRIPT_DIR/frontend/public/" $FRONTEND_DIR/
+
+# 检查前端目录是否存在
+if [ ! -d "$SCRIPT_DIR/frontend" ]; then
+    echo "错误：前端目录不存在，请检查目录结构"
+    exit 1
+fi
+
+if [ ! -d "$SCRIPT_DIR/frontend/templates" ]; then
+    echo "错误：前端模板目录不存在，请检查目录结构"
+    exit 1
+fi
+
+if [ ! -d "$SCRIPT_DIR/frontend/public" ]; then
+    echo "错误：前端静态资源目录不存在，请检查目录结构"
+    exit 1
+fi
+
+# 复制前端文件
+cp -r "$SCRIPT_DIR/frontend/templates"/* "$FRONTEND_DIR/"
+cp -r "$SCRIPT_DIR/frontend/public" "$FRONTEND_DIR/"
 chown -R www-data:www-data $FRONTEND_DIR
 
 # 7. 启动后端服务
