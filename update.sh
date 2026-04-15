@@ -26,17 +26,17 @@ cd ..
 
 # 3. 重启 Nginx
 echo "\n3. 重启 Nginx..."
-sudo systemctl restart nginx
+systemctl restart nginx
 
 # 4. 重启后端服务
 echo "\n4. 重启后端服务..."
-sudo systemctl restart parking-notify.service
+systemctl restart parking-notify.service
 
 # 5. 检查服务状态
 echo "\n5. 检查服务状态..."
 sleep 3
-sudo systemctl status parking-notify.service --no-pager
-sudo systemctl status nginx --no-pager
+systemctl status parking-notify.service --no-pager
+systemctl status nginx --no-pager
 
 # 6. 显示更新结果
 echo "\n========================================"

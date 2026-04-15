@@ -11,12 +11,12 @@ echo "========================================"
 
 # 1. 安装必要的依赖
 echo "\n1. 安装必要的依赖..."
-sudo apt update
+apt update
 
 # 检查 Nginx 是否安装
 if ! command -v nginx &> /dev/null; then
     echo "Nginx 未安装，正在安装..."
-    sudo apt install -y nginx
+    apt install -y nginx
 else
     echo "Nginx 已安装，跳过安装步骤"
 fi
@@ -25,7 +25,7 @@ fi
 # 检查 Python 3 是否安装
 if ! command -v python3 &> /dev/null; then
     echo "Python 3 未安装，正在安装..."
-    sudo apt install -y python3
+    apt install -y python3
 else
     echo "Python 3 已安装，跳过安装步骤"
 fi
@@ -33,7 +33,7 @@ fi
 # 检查 pip 是否安装
 if ! command -v pip3 &> /dev/null; then
     echo "pip 未安装，正在安装..."
-    sudo apt install -y python3-pip
+    apt install -y python3-pip
 else
     echo "pip 已安装，跳过安装步骤"
 fi
@@ -41,7 +41,7 @@ fi
 # 检查 python3-venv 是否安装
 if ! dpkg -l | grep -q python3-venv; then
     echo "python3-venv 未安装，正在安装..."
-    sudo apt install -y python3-venv
+    apt install -y python3-venv
 else
     echo "python3-venv 已安装，跳过安装步骤"
 fi
@@ -74,7 +74,7 @@ NGINX_CONF="/etc/nginx/sites-available/parking-notify"
 NGINX_LINK="/etc/nginx/sites-enabled/parking-notify"
 
 # 创建 Nginx 配置文件
-sudo cat > $NGINX_CONF << 'EOF'
+cat > $NGINX_CONF << 'EOF'
 server {
     listen 80;
     server_name localhost;
@@ -98,27 +98,27 @@ server {
 EOF
 
 # 创建符号链接
-sudo ln -sf $NGINX_CONF $NGINX_LINK
+ln -sf $NGINX_CONF $NGINX_LINK
 
 # 测试 Nginx 配置
-sudo nginx -t
+nginx -t
 
 # 重启 Nginx
-sudo systemctl restart nginx
+systemctl restart nginx
 
 # 6. 部署前端静态文件
 echo "\n6. 部署前端静态文件..."
 FRONTEND_DIR="/var/www/parking-notify"
-sudo mkdir -p $FRONTEND_DIR
-sudo cp -r "$(dirname "$0")/frontend/templates/"* $FRONTEND_DIR/
-sudo cp -r "$(dirname "$0")/frontend/public/" $FRONTEND_DIR/
-sudo chown -R www-data:www-data $FRONTEND_DIR
+mkdir -p $FRONTEND_DIR
+cp -r "$(dirname "$0")/frontend/templates/"* $FRONTEND_DIR/
+cp -r "$(dirname "$0")/frontend/public/" $FRONTEND_DIR/
+chown -R www-data:www-data $FRONTEND_DIR
 
 # 7. 启动后端服务
 echo "\n7. 启动后端服务..."
 # 创建 systemd 服务文件
 SERVICE_FILE="/etc/systemd/system/parking-notify.service"
-sudo cat > $SERVICE_FILE << 'EOF'
+cat > $SERVICE_FILE << 'EOF'
 [Unit]
 Description=Parking Notify Backend Service
 After=network.target
@@ -135,21 +135,21 @@ WantedBy=multi-user.target
 EOF
 
 # 复制后端文件到 /var/www
-sudo mkdir -p /var/www/parking-notify/backend
-sudo cp -r "$(dirname "$0")/backend/"* /var/www/parking-notify/backend/
+mkdir -p /var/www/parking-notify/backend
+cp -r "$(dirname "$0")/backend/"* /var/www/parking-notify/backend/
 
 # 重新加载 systemd 配置
-sudo systemctl daemon-reload
+systemctl daemon-reload
 # 启动服务
-sudo systemctl start parking-notify.service
+systemctl start parking-notify.service
 # 设置开机自启
-sudo systemctl enable parking-notify.service
+systemctl enable parking-notify.service
 
 # 8. 检查服务状态
 echo "\n8. 检查服务状态..."
 sleep 3
-sudo systemctl status parking-notify.service --no-pager
-sudo systemctl status nginx --no-pager
+systemctl status parking-notify.service --no-pager
+systemctl status nginx --no-pager
 
 # 9. 显示部署结果
 echo "\n========================================"
