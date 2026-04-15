@@ -46,8 +46,8 @@ else
     echo "python3-venv 已安装，跳过安装步骤"
 fi
 
-# 保存脚本所在目录
-SCRIPT_DIR="$(dirname "$0")"
+# 保存脚本所在目录（转换为绝对路径）
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # 显示当前目录和脚本目录，用于调试
 echo "当前工作目录: $(pwd)"
