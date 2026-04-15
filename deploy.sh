@@ -79,13 +79,18 @@ fi
 
 # 5. 配置 Nginx
 echo "\n5. 配置 Nginx..."
-NGINX_CONF="/etc/nginx/sites-available/parking-notify"
-NGINX_LINK="/etc/nginx/sites-enabled/parking-notify"
 
-# 创建 Nginx 配置文件
-cat > $NGINX_CONF << 'EOF'
+# 检查 Nginx 配置目录结构
+if [ -d "/etc/nginx/sites-available" ] && [ -d "/etc/nginx/sites-enabled" ]; then
+    # 标准 Debian/Ubuntu Nginx 配置
+    NGINX_CONF="/etc/nginx/sites-available/parking-notify"
+    NGINX_LINK="/etc/nginx/sites-enabled/parking-notify"
+    
+    # 创建 Nginx 配置文件
+    cat > $NGINX_CONF << 'EOF'
 server {
-    listen 80;
+    listen 80 default_server;
+    listen [::]:80 default_server;
     server_name localhost;
 
     # 前端静态文件
@@ -106,14 +111,39 @@ server {
 }
 EOF
 
-# 创建符号链接
-ln -sf $NGINX_CONF $NGINX_LINK
+    # 创建符号链接
+    ln -sf $NGINX_CONF $NGINX_LINK
+    
+    # 移除默认配置（如果存在）
+    if [ -f "/etc/nginx/sites-enabled/default" ]; then
+        rm -f "/etc/nginx/sites-enabled/default"
+        echo "已移除默认 Nginx 配置"
+    fi
+else
+    # 非标准 Nginx 配置，直接修改主配置文件
+    NGINX_MAIN_CONF="/etc/nginx/nginx.conf"
+    
+    # 备份原配置文件
+    cp $NGINX_MAIN_CONF "$NGINX_MAIN_CONF.bak"
+    echo "已备份原 Nginx 配置文件"
+    
+    # 替换主配置文件的 server 块
+    sed -i '/server {/,/}/c\    server {\n        listen 80 default_server;\n        listen [::]:80 default_server;\n        server_name localhost;\n\n        # 前端静态文件\n        location / {\n            root /var/www/parking-notify;\n            index index.html;\n            try_files $uri $uri/ =404;\n        }\n\n        # 后端 API 代理\n        location /api {\n            proxy_pass http://localhost:5000;\n            proxy_set_header Host $host;\n            proxy_set_header X-Real-IP $remote_addr;\n            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n            proxy_set_header X-Forwarded-Proto $scheme;\n        }\n    }' $NGINX_MAIN_CONF
+    
+    echo "已修改 Nginx 主配置文件"
+fi
 
 # 测试 Nginx 配置
+echo "测试 Nginx 配置..."
 nginx -t
 
 # 重启 Nginx
+echo "重启 Nginx..."
 systemctl restart nginx
+
+# 检查 Nginx 状态
+echo "检查 Nginx 状态..."
+systemctl status nginx --no-pager
 
 # 6. 部署前端静态文件
 echo "\n6. 部署前端静态文件..."
