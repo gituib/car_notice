@@ -78,7 +78,8 @@ sudo systemctl restart nginx
 echo "\n6. 部署前端静态文件..."
 FRONTEND_DIR="/var/www/parking-notify"
 sudo mkdir -p $FRONTEND_DIR
-sudo cp -r "$(dirname "$0")/frontend/"* $FRONTEND_DIR/
+sudo cp -r "$(dirname "$0")/frontend/templates/"* $FRONTEND_DIR/
+sudo cp -r "$(dirname "$0")/frontend/public/" $FRONTEND_DIR/
 sudo chown -R www-data:www-data $FRONTEND_DIR
 
 # 7. 启动后端服务
