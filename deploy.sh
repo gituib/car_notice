@@ -49,6 +49,12 @@ fi
 # 保存脚本所在目录
 SCRIPT_DIR="$(dirname "$0")"
 
+# 显示当前目录和脚本目录，用于调试
+echo "当前工作目录: $(pwd)"
+echo "脚本所在目录: $SCRIPT_DIR"
+echo "脚本目录内容:"
+ls -la "$SCRIPT_DIR"
+
 # 2. 创建并激活虚拟环境
 echo "\n2. 创建并激活虚拟环境..."
 cd "$SCRIPT_DIR/backend"
